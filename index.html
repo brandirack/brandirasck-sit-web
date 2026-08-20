@@ -16,9 +16,9 @@ body{margin:0;background:radial-gradient(circle at 15% 15%,#0a1018 0,transparent
 a{text-decoration:none;color:inherit}
 .container{width:min(1180px,92%);margin:auto}
 nav{height:78px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(7,7,7,.88);backdrop-filter:blur(14px);z-index:10}
-.logo{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.5px;color:#fff}
-.logo-mark{width:42px;height:42px;border:2px solid var(--gold);border-radius:10px;display:grid;place-items:center;color:var(--gold);font-size:20px;background:#000;font-weight:bold;}
-.logo small{display:block;color:#8d96a3;font-size:8px;letter-spacing:2px;margin-top:3px}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.5px}
+.logo-mark{width:42px;height:42px;border:2px solid var(--gold);border-radius:10px;display:grid;place-items:center;color:var(--gold);font-size:23px}
+.logo small{display:block;color:#888;font-size:8px;letter-spacing:2px;margin-top:3px}
 .navlinks{display:flex;gap:28px;color:#c8c5bf;font-size:14px}
 .navlinks a:hover{color:var(--gold)}
 .btn{border:1px solid var(--gold);padding:12px 20px;border-radius:14px;background:linear-gradient(135deg,#ff8a1f,#ff4d00);color:#15110a;font-weight:800;cursor:pointer;display:inline-block}
@@ -26,13 +26,27 @@ nav{height:78px;border-bottom:1px solid var(--line);display:flex;align-items:cen
 .hero{min-height:680px;display:grid;grid-template-columns:1.05fr .95fr;gap:45px;align-items:center;padding:70px 0 50px}
 .badge{display:inline-block;border:1px solid var(--line);border-radius:30px;padding:9px 16px;color:#f2f5f8;background:#090b10}
 h1{font-size:clamp(42px,6vw,76px);line-height:1.08;margin:22px 0}
-h1 span{background:linear-gradient(90deg,#ff6a00,#ff9a3d 45%,#1597ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 span{color:var(--gold)}
 .lead{font-size:20px;line-height:1.9;color:#c7c3bb;max-width:650px}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);border-radius:22px;margin-top:35px;overflow:hidden;background:#090b10}
+.metric{padding:20px 12px;text-align:center;border-left:1px solid rgba(255,255,255,.08)}
+.metric:last-child{border-left:0}
+.metric b{display:block;color:var(--gold);font-size:24px}.metric small{color:#aaa}
 .visual{position:relative;min-height:470px;display:grid;place-items:center}
 .phone{width:260px;height:500px;border:7px solid #202020;border-radius:38px;background:linear-gradient(160deg,#171717,#090909);box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 60px rgba(21,151,255,.12);transform:rotate(-8deg);padding:22px}
 .screen{height:100%;border-radius:25px;background:linear-gradient(180deg,#111,#080808);padding:24px 16px}
 .chart{height:150px;border-bottom:1px solid #333;position:relative;margin-top:20px}
 .chart svg{width:100%;height:100%}
+.float{position:absolute;padding:12px 15px;border:1px solid var(--line);border-radius:14px;background:#0d0d0d;box-shadow:0 10px 30px #000;color:#fff}
+.f1{top:70px;left:0}.f2{top:175px;right:0}.f3{bottom:80px;left:15px}.f4{bottom:30px;right:5px}
+section{padding:90px 0;border-top:1px solid rgba(255,255,255,.06)}
+.section-title{text-align:center;font-size:38px;margin:0 0 12px}.section-sub{text-align:center;color:var(--muted);margin:0 auto 42px;line-height:1.8}
+.industries{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{min-height:155px;border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:end;background:linear-gradient(145deg,#151515,#0a0a0a);transition:.25s;cursor:pointer}
+.card:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 15px 40px rgba(231,184,79,.1)}
+.card .icon{font-size:30px;color:var(--gold);margin-bottom:auto}.card h3{margin:0 0 7px}.card p{margin:0;color:#999;font-size:13px}
+.trust{display:flex;gap:25px;justify-content:center;flex-wrap:wrap;color:#777;font-weight:800;font-size:20px;letter-spacing:2px}
+.cta{text-align:center;border:1px solid var(--line);border-radius:28px;padding:65px 25px;background:radial-gradient(circle at center,#0a1018,#090b10 55%)}
 footer{padding:35px 0;color:#777;text-align:center;border-top:1px solid var(--line)}
 
 /* Welcome Modal for Language & Currency */
@@ -44,11 +58,18 @@ footer{padding:35px 0;color:#777;text-align:center;border-top:1px solid var(--li
 .select-group label{display:block;color:#ccc;font-size:13px;margin-bottom:8px}
 .select-group select{width:100%;background:#11151b;color:#fff;border:1px solid #303640;border-radius:12px;padding:13px;outline:none;font-size:14px}
 .welcome-btn{width:100%;margin-top:10px;text-align:center}
+
+@media(max-width:900px){
+ .navlinks{display:none}.hero{grid-template-columns:1fr;text-align:center}.lead{margin:auto}.visual{order:-1}.metrics{grid-template-columns:repeat(2,1fr)}.metric:nth-child(2n){border-left:0}.industries{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+ .hero{padding-top:35px}.phone{width:210px;height:410px}.visual{min-height:440px}.float{font-size:12px}.industries{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}h1{font-size:42px}.navlinks{display:none}
+}
 </style>
 </head>
 <body>
 
-<!-- شاشة اختيار اللغة والعملة في الأول -->
+<!-- نافذة اختيار اللغة والعملة في الأول -->
 <div class="welcome-overlay" id="welcomeModal">
   <div class="welcome-box">
     <h2>مرحباً بك في BRANDIRASCK</h2>
@@ -100,6 +121,14 @@ footer{padding:35px 0;color:#777;text-align:center;border-top:1px solid var(--li
       <a href="#contact" class="btn">احجز استشارة مجانية</a>
       <a href="#services" class="btn secondary">اكتشف خدماتنا</a>
     </div>
+    
+    <div class="metrics">
+      <div class="metric"><b>+120</b><small>مشروع ناجح</small></div>
+      <div class="metric"><b>98%</b><small>رضا العملاء</small></div>
+      <div class="metric"><b>3X</b><small>مضاعفة المبيعات</small></div>
+      <div class="metric"><b>24/7</b><small>دعم مستمر</small></div>
+      <div class="metric"><b>5+</b><small>سنوات خبرة</small></div>
+    </div>
   </div>
   <div class="visual">
     <div class="phone">
@@ -112,6 +141,10 @@ footer{padding:35px 0;color:#777;text-align:center;border-top:1px solid var(--li
         </div>
       </div>
     </div>
+    <div class="float f1">📈 تحليلات حية</div>
+    <div class="float f2">🚀 نمو متصاعد</div>
+    <div class="float f3">💡 استراتيجية ذكية</div>
+    <div class="float f4">🎯 استهداف دقيق</div>
   </div>
 </header>
 
@@ -126,11 +159,9 @@ function closeWelcomeModal() {
   const lang = document.getElementById('prefLang').value;
   const currency = document.getElementById('prefCurrency').value;
   
-  // حفظ الاختيارات في المتصفح إذا بغيت تعاود تستعملهم من بعد
   localStorage.setItem('brand_lang', lang);
   localStorage.setItem('brand_currency', currency);
   
-  // إخفاء نافذة الترحيب
   document.getElementById('welcomeModal').style.display = 'none';
 }
 </script>
