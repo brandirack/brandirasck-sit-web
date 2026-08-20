@@ -20,7 +20,6 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 module.exports = async (req, res) => {
-    // إعدادات CORS باش الواجهة تتصل بالسيرفر بلا مشاكل
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -46,7 +45,7 @@ module.exports = async (req, res) => {
         await newUser.save();
         
         return res.status(200).json({ success: true, message: 'تم التسجيل بنجاح!' });
-    }chronic catch (err) {
+    } catch (err) {
         return res.status(500).json({ success: false, error: err.message });
     }
 };
