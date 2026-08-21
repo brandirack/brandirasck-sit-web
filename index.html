@@ -822,7 +822,16 @@ function demoPay(){let a=JSON.parse(localStorage.getItem("brandirasck_account")|
     document.body.appendChild(m);document.getElementById('setupLang').value=pref.lang;document.getElementById('setupCur').value=pref.currency;
     document.getElementById('setupLang').onchange=function(){pref.lang=this.value;buildPrefs();document.getElementById('brandSetup').classList.add('open')};
     document.getElementById('setupCur').onchange=function(){pref.currency=this.value};
-    document.getElementById('savePrefs').onclick=function(){pref.lang=document.getElementById('setupLang').value;pref.currency=document.getElementById('setupCur').value;save();m.remove()};
+    
+    // التعديل هنا باش زر متابعة يخدم بلا مشكل
+    document.getElementById('savePrefs').addEventListener('click', function(e){
+      e.preventDefault();
+      pref.lang = document.getElementById('setupLang').value;
+      pref.currency = document.getElementById('setupCur').value;
+      save();
+      if(m) m.remove();
+    });
+
     m.classList.add('open');
   }
   function addNav(){
@@ -840,6 +849,6 @@ function demoPay(){let a=JSON.parse(localStorage.getItem("brandirasck_account")|
 })();
 </script>
 </body>
-</html>
+</html> 
 </body>
 </html>
