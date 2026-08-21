@@ -608,10 +608,25 @@ async function BRcopyMessage(){
 function BRgetClientCount(){return Number(localStorage.getItem("brandirasck_client_count")||5611);}
 function BRrenderClientCount(){const el=document.querySelector('#results .metric:first-child b');if(el)el.textContent=BRgetClientCount().toLocaleString('ar-MA');}
 function BRincrementClientCount(){const key="brandirasck_registered_counted";if(localStorage.getItem(key)==="1")return;const next=BRgetClientCount()+1;localStorage.setItem("brandirasck_client_count",String(next));localStorage.setItem(key,"1");BRrenderClientCount();}
-function BRsend(){
+async function BRsend(){
+  const btn=document.getElementById("configNext");
+  if(btn){btn.disabled=true;btn.textContent=(BRgetPrefs().lang==='ar'?"كنسجلو...":"Saving...")}
   try{
     const s=BRstate.sel;
-    localStorage.setItem('brandirasck_account',JSON.stringify({lead:BRstate.lead,industry:BRstate.industry,sel:s,registeredAt:Date.now(),paid:false}));
+    const payload={
+      name:BRstate.lead.name, nickname:BRstate.lead.nickname,
+      whatsapp:BRstate.lead.whatsapp, email:BRstate.lead.email,
+      city:BRstate.lead.city, instagram:BRstate.lead.instagram,
+      password:BRstate.lead.password, industry:BRstate.industry, sel:s
+    };
+    const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json();
+    if(!data.success){
+      if(btn){btn.disabled=false;btn.textContent=(BRgetPrefs().lang==='ar'?"تأكيد الاشتراك":"Confirm")}
+      alert(data.message||"وقع خطأ، حاول مرة أخرى");
+      return;
+    }
+    localStorage.setItem('brandirasck_account',JSON.stringify({...data.account,paid:false}));
     BRincrementClientCount();
     const msg=BRmessageText();
     window.BRFINALMSG=msg;
@@ -619,9 +634,8 @@ function BRsend(){
     setTimeout(()=>{try{BRopenWhatsApp()}catch(e){console.warn('WhatsApp could not be opened automatically',e)}},180);
   }catch(err){
     console.error('BRsend error:',err);
-    const fallback=`BRANDIRASCK — طلب تأكيد الاشتراك\n\nالاسم الكامل: ${BRstate.lead?.name||'-'}\nWhatsApp: ${BRstate.lead?.whatsapp||'-'}\nGmail: ${BRstate.lead?.email||'-'}\nالمدينة: ${BRstate.lead?.city||'-'}\nInstagram: ${BRstate.lead?.instagram||'-'}\nالمجال: ${BRstate.industry||'-'}\nالمجموع: ${BRcalc().toLocaleString()} DH\n\nيرجى تأكيد الاشتراك.`;
-    window.BRFINALMSG=fallback;
-    BRshowSendFallback(fallback);
+    if(btn){btn.disabled=false;btn.textContent=(BRgetPrefs().lang==='ar'?"تأكيد الاشتراك":"Confirm")}
+    alert("ماقدرناش نتصلو بالسيرفر، تأكد من الإنترنت وحاول مرة أخرى");
   }
 }
 function BResc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
