@@ -816,24 +816,37 @@ function demoPay(){let a=JSON.parse(localStorage.getItem("brandirasck_account")|
   }
   function updateSelectors(){let l=document.getElementById('brandLang');if(l)l.value=pref.lang;let c=document.getElementById('brandCurrency');if(c)c.value=pref.currency}
   function save(){localStorage.setItem(baseKey,JSON.stringify(pref));window.BRPREF=pref;refresh();if(typeof BRrender==='function'&&document.getElementById('configurator')?.classList.contains('open'))BRrender()}
+  
   function buildPrefs(){
     const old=document.getElementById('brandSetup');if(old)old.remove();
-    const m=document.createElement('div');m.id='brandSetup';m.innerHTML=`<div class="box"><span class="badge">BRANDIRASCK</span><h2>${pref.lang==='ar'?'اختر لغة الموقع والعملة':'Choose your language and currency'}</h2><p class="pref-note">${pref.lang==='ar'?'من هنا يمكنك اختيار اللغة التي تريد قراءة الموقع بها، والعملة التي تريد عرض الأسعار بها. سيتم تطبيق الاختيار على الواجهة والأسعار.':'Choose the language you prefer and the currency used to display prices. Your choice applies across the interface and prices.'}</p><div class="pref-grid"><label>${pref.lang==='ar'?'لغة الموقع':'Website language'}<select id="setupLang">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('')}</select></label><label>${pref.lang==='ar'?'العملة':'Currency'}<select id="setupCur"><option value="MAD">الدرهم المغربي — DH</option><option value="EUR">Euro — €</option><option value="USD">US Dollar — $</option></select></label></div><div class="pref-actions"><button class="btn" id="savePrefs">${pref.lang==='ar'?'متابعة':'Continue'}</button></div></div>`;
-    document.body.appendChild(m);document.getElementById('setupLang').value=pref.lang;document.getElementById('setupCur').value=pref.currency;
+    const m=document.createElement('div');m.id='brandSetup';
+    m.innerHTML=`<div class="box"><span class="badge">BRANDIRASCK</span><h2>${pref.lang==='ar'?'اختر لغة الموقع والعملة':'Choose your language and currency'}</h2><p class="pref-note">${pref.lang==='ar'?'من هنا يمكنك اختيار اللغة التي تريد قراءة الموقع بها، والعملة التي تريد عرض الأسعار بها. سيتم تطبيق الاختيار على الواجهة والأسعار.':'Choose the language you prefer and the currency used to display prices. Your choice applies across the interface and prices.'}</p><div class="pref-grid"><label>${pref.lang==='ar'?'لغة الموقع':'Website language'}<select id="setupLang">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('')}</select></label><label>${pref.lang==='ar'?'العملة':'Currency'}<select id="setupCur"><option value="MAD">الدرهم المغربي — DH</option><option value="EUR">Euro — €</option><option value="USD">US Dollar — $</option></select></label></div><div class="pref-actions"><button type="button" class="btn" id="savePrefs">${pref.lang==='ar'?'متابعة':'Continue'}</button></div></div>`;
+    
+    document.body.appendChild(m);
+    document.getElementById('setupLang').value=pref.lang;
+    document.getElementById('setupCur').value=pref.currency;
+    
     document.getElementById('setupLang').onchange=function(){pref.lang=this.value;buildPrefs();document.getElementById('brandSetup').classList.add('open')};
     document.getElementById('setupCur').onchange=function(){pref.currency=this.value};
     
-    // التعديل هنا باش زر متابعة يخدم بلا مشكل
-    document.getElementById('savePrefs').addEventListener('click', function(e){
-      e.preventDefault();
-      pref.lang = document.getElementById('setupLang').value;
-      pref.currency = document.getElementById('setupCur').value;
-      save();
-      if(m) m.remove();
-    });
+    // تفعيل زر متابعة بطريقة مضمونة 100% باستخدام setTimeout والتأكد من العنصر
+    setTimeout(() => {
+      const saveBtn = document.getElementById('savePrefs');
+      if(saveBtn){
+        saveBtn.onclick = function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          pref.lang = document.getElementById('setupLang').value;
+          pref.currency = document.getElementById('setupCur').value;
+          save();
+          if(m && m.parentNode) m.remove();
+        };
+      }
+    }, 50);
 
     m.classList.add('open');
   }
+
   function addNav(){
     const nav=document.querySelector('nav .container');if(!nav||document.getElementById('brandPrefs'))return;
     const wrap=document.createElement('div');wrap.id='brandPrefs';wrap.innerHTML=`<select id="brandLang" aria-label="Language">${Object.entries(LANGS).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('')}</select><select id="brandCurrency" aria-label="Currency"><option value="MAD">DH</option><option value="EUR">€</option><option value="USD">$</option></select>`;
@@ -849,6 +862,6 @@ function demoPay(){let a=JSON.parse(localStorage.getItem("brandirasck_account")|
 })();
 </script>
 </body>
-</html> 
+</html>
 </body>
 </html>
