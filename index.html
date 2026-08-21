@@ -697,12 +697,11 @@ async function loginAccount(){
   if(!emailInput || !passInput){ alert("المرجو إدخال البريد الإلكتروني وكلمة السر"); return; }
   
   try {
-    let response = await fetch("/api/login", {
+   let response = await fetch(window.location.origin + "/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: emailInput, password: passInput })
     });
-    
     let data = await response.json();
     if(data.success){
       localStorage.setItem("brandirasck_account", JSON.stringify(data.account));
