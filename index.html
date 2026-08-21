@@ -78,7 +78,6 @@ function BRsend(){
 
     // إضافة الحساب إلى قائمة الحسابات الكلية لكي لا يتضيع ويتمالقا وقت Login
     let accounts = JSON.parse(localStorage.getItem('brandirasck_accounts_list') || '[]');
-    // التأكد من عدم وجوده مسبقاً باليميل
     accounts = accounts.filter(acc => acc.lead.email.toLowerCase() !== newAccount.lead.email.toLowerCase());
     accounts.push(newAccount);
     localStorage.setItem('brandirasck_accounts_list', JSON.stringify(accounts));
@@ -110,7 +109,6 @@ function loginAccount(){
   let foundAccount = accounts.find(acc => acc.lead.email.toLowerCase() === emailInput && acc.lead.password === passInput);
 
   if(!foundAccount){
-    // للتحقق الاحتياطي مع الحساب المفرد القديم إن وجد
     let singleAccount = JSON.parse(localStorage.getItem("brandirasck_account") || "null");
     if(singleAccount && singleAccount.lead.email.toLowerCase() === emailInput && singleAccount.lead.password === passInput){
       foundAccount = singleAccount;
@@ -122,7 +120,6 @@ function loginAccount(){
     return;
   }
 
-  // تعيينه كحساب حالي نشط وعرض الداشبورد
   localStorage.setItem("brandirasck_account", JSON.stringify(foundAccount));
   renderDashboard(foundAccount);
 }
