@@ -6,11 +6,3 @@
     "bcryptjs": "^2.4.3"
   }
 }
-```[cite: 1]
-
-### الخطوات الموالية:
-1. سير لـ GitHub، عدل ملف `package.json` وحط فيه الكود الفوق، ودير **Commit changes**.
-2. تأكد بلي داير متغير البيئة **`MONGODB_URI`** في Vercel (`Settings > Environment Variables`)[cite: 1].
-3. تأكد بلي الدوال في ملف `index.html` مبدلين بالدوال الجداد (`BRsend` و `loginAccount`) اللي كيصيفطوا الطلبات لـ `/api/register` و `/api/login`[cite: 1].
-
-منين دير هادو، دير **Redeploy** في Vercel، وكون هاني أن أي مستخدم تسجل غادي يبقى الحساب دياله محفوظ في MongoDB ويقدر يدخل بـ Gmail وكلمة السر من أي جهاز بلا ما يضيع ليه!
