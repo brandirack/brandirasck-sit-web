@@ -691,7 +691,28 @@ BRrenderClientCount();
 function openAccount(){let a=JSON.parse(localStorage.getItem("brandirasck_account")||"null");if(a)renderDashboard(a);else renderLogin();document.getElementById("accountModal").classList.add("open");document.body.style.overflow="hidden"}
 function closeAccount(){document.getElementById("accountModal").classList.remove("open");document.body.style.overflow=""}
 function renderLogin(){document.getElementById("accountBody").innerHTML=`<div class="account-card" style="max-width:560px;margin:auto"><div class="login-tabs"><button class="active">دخول للحساب</button><button onclick="startRegistration();closeAccount()">تسجيل جديد</button></div><p class="config-note">دخل Gmail وكلمة السر لكي تشوف خطتك، حالة الأداء، الأيام المتبقية والبرنامج الشهري.</p><div class="form-grid"><label>Gmail<input id="loginEmail" type="email"></label><label>كلمة السر<input id="loginPass" type="password"></label></div><button class="btn" style="margin-top:16px" onclick="loginAccount()">دخول</button></div>`}
-function loginAccount(){let a=JSON.parse(localStorage.getItem("brandirasck_account")||"null"),e=document.getElementById("loginEmail")?.value.trim(),p=document.getElementById("loginPass")?.value;if(!a||a.lead.email!==e||a.lead.password!==p){alert("المعلومات غير صحيحة أو الحساب مازال ما تسجلش فهاد الجهاز.");return}renderDashboard(a)}
+async function loginAccount(){
+  let e = document.getElementById("loginEmail")?.value.trim();
+  let p = document.getElementById("loginPass")?.value;
+  if(!e || !p){ alert("المرجو إدخال البريد الإلكتروني وكلمة السر"); return; }
+  
+  try {
+    let res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: e, password: p })
+    });
+    let data = await res.json();
+    if(data.success){
+      localStorage.setItem("brandirasck_account", JSON.stringify(data.account));
+      renderDashboard(data.account);
+    } else {
+      alert(data.message || "المعلومات غير صحيحة");
+    }
+  } catch(err) {
+    alert("ماقدرناش نتصلو بالسيرفر، تأكد من الإنترنت");
+  }
+}
 
 function logoutAccount(){
   localStorage.removeItem("brandirasck_account");
