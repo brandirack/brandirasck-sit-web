@@ -376,14 +376,57 @@ function saveLead(){
     const e=document.getElementById("f_"+k); if(e) lead[k]=e.value.trim();
   });
 }
-function nextStep(){
+async function nextStep(){
   if(currentStep===0){
     saveLead();
-    if(!lead.name||!lead.brand||!lead.city||!lead.whatsapp){alert("يرجى أكمل الاسم، اسم الـBrand، المدينة وWhatsApp.");return;}
+    if(!lead.name||!lead.brand||!lead.city||!lead.whatsapp||!lead.email||!lead.password){
+      alert("يرجى إكمال جميع المعلومات المطلوبة (الاسم، البريد، كلمة السر، إلخ).");
+      return;
+    }
+    
+    // إرسال البيانات لتسجيل الحساب في القاعدة البيانات مباشرة
+    try {
+      const payload = {
+        name: lead.name,
+        nickname: lead.brand || lead.nickname || "",
+        whatsapp: lead.whatsapp,
+        email: lead.email,
+        city: lead.city,
+        instagram: lead.instagram || "",
+        password: lead.password,
+        industry: window.BRstate?.industry || "",
+        sel: {}
+      };
+
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if(!data.success){
+        alert(data.message || "البريد الإلكتروني مسجل مسبقاً أو حدث خطأ");
+        return;
+      }
+
+      // حفظ الحساب في المتصفح باش يبقى مسجل دخول
+      localStorage.setItem('brandirasck_account', JSON.stringify(data.account));
+    } catch(err) {
+      console.error('Registration error:', err);
+      alert("تعذر الاتصال بالسيرفر، تأكد من الإنترنت");
+      return;
+    }
   }
-  if(currentStep<2){currentStep++;renderStep();}else sendWhatsApp();
+
+  if(currentStep<2){
+    currentStep++;
+    renderStep();
+  } else {
+    sendWhatsApp();
+  }
 }
-function prevStep(){if(currentStep>0){currentStep--;renderStep();}}
+  function prevStep(){if(currentStep>0){currentStep--;renderStep();}}
 function sendWhatsApp(){
   const custom=serviceCatalog[currentIndustry];
   const services=custom&&custom.length?custom:commonServices;
