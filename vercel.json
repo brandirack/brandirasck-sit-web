@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/api/catalog",
-      "destination": "/api/catalog.js"
-    }
-  ]
-}
