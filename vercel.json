@@ -1,7 +1,8 @@
 {
-  "functions": {
-    "api/catalog.js": {
-      "runtime": "nodejs20.x"
+  "rewrites": [
+    {
+      "source": "/api/catalog",
+      "destination": "/api/catalog.js"
     }
-  }
+  ]
 }
