@@ -1489,79 +1489,12 @@ function demoPay(){let a=JSON.parse(localStorage.getItem("brandirasck_account")|
 })();
 </script>
 
-<!-- V7 FINAL PDF FIX: isolate only the visible recap in a clean print/save window. -->
-<style id="brandirasck-v7-pdf-fix">
-  .br-v6-pdf-actions .br-v7-download{min-width:210px}
-</style>
 <script>
-(function(){
-  window.BRdownloadPDF=function(){
-    const docs=document.querySelectorAll('#BRPDFDocument');
-    const el=docs.length?docs[docs.length-1]:null;
-    const status=document.getElementById('brV6PdfStatus');
-    const setStatus=(txt,cls)=>{if(status){status.className='br-v6-pdf-status '+(cls||'');status.textContent=txt}};
-    if(!el){alert('ما لقيتش ملخص الـPDF.');return}
-
-    const w=window.open('','_blank','width=900,height=1100');
-    if(!w){
-      setStatus('⚠️ المتصفح منع النافذة. سمح بالنوافذ المنبثقة وعاود الضغط.','bad');
-      return;
-    }
-
-    const clone=el.cloneNode(true);
-    clone.removeAttribute('id');
-    clone.querySelectorAll('button,a,input,select,textarea').forEach(x=>x.remove());
-
-    w.document.open();
-    w.document.write(`<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BRANDIRASCK — Récapitulatif</title>
-<style>
-  @page{size:A4 portrait;margin:8mm}
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:#070707;color:#f7f5ef}
-  body{font-family:Arial,"Noto Sans Arabic",sans-serif;direction:rtl}
-  .print-wrap{width:100%;max-width:190mm;margin:0 auto}
-  #pdf-copy{width:100%!important;max-width:none!important;margin:0!important;box-shadow:none!important}
-  @media print{
-    html,body{background:#070707!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-    .print-wrap{max-width:none}
-  }
-</style>
-</head>
-<body>
-<div class="print-wrap"><div id="pdf-copy"></div></div>
-</body>
-</html>`);
-    w.document.close();
-    w.document.getElementById('pdf-copy').outerHTML=clone.outerHTML;
-
-    setStatus('🖨️ غادي يبان لك غير ملخص الـPDF. اختار «Save as PDF / Enregistrer au format PDF».','ok');
-    setTimeout(function(){w.focus();w.print();},500);
-  };
-
-  setTimeout(function(){
-    document.querySelectorAll('.br-v6-pdf-actions .btn').forEach(function(btn){
-      if((btn.getAttribute('onclick')||'').includes('BRdownloadPDF')){
-        btn.textContent='⬇️ تحميل / حفظ PDF';
-        btn.classList.add('br-v7-download');
-      }
-    });
-  },0);
-})();
-</script>
-
-</body></html>`);
-    w.document.close();
-  };
-  function BRfPriceFor(f){let p=f?.type==='stable'?260:f?.type==='refill'?150:60;return (f?.qty||0)/10000*p}
-
-  // Rebind button handlers after overrides.
-  const nb=document.getElementById('configNext'),bb=document.getElementById('configBack');if(nb)nb.onclick=e=>{e.preventDefault();BRnext()};if(bb)bb.onclick=BRback;
-})();
+/* Compatibility helper for legacy in-file code. */
+window.BRfPriceFor = window.BRfPriceFor || function(f){
+  const p = f?.type === 'stable' ? 260 : f?.type === 'refill' ? 150 : 60;
+  return ((f?.qty || 0) / 10000) * p;
+};
 </script>
 
 <script>
@@ -1931,74 +1864,13 @@ function demoPay(){let a=JSON.parse(localStorage.getItem("brandirasck_account")|
     const esc=BResc;
     return `<div id="BRPDFDocument" style="background:radial-gradient(circle at 15% 10%,#0a1018 0,transparent 34%),#070707;color:#f7f5ef;padding:30px;border-radius:20px;font-family:Arial,'Noto Sans Arabic',sans-serif;direction:rtl;text-align:right;border:1px solid #e7b84f;box-shadow:0 20px 60px #0009;line-height:1.8"><div style="display:flex;align-items:center;gap:16px;border-bottom:2px solid #e7b84f;padding-bottom:18px;margin-bottom:22px"><img src="${logo}" style="width:68px;height:68px;border-radius:14px;object-fit:cover"><div><div style="color:#e7b84f;font-weight:900;font-size:25px;letter-spacing:3px">BRANDIRASCK</div><small style="color:#8d96a3;letter-spacing:2px">DIGITAL GROWTH PARTNER</small></div></div><h2 style="margin:0 0 8px;color:#f5d27b">📄 ملخص طلبك</h2><p style="color:#aeb5bf">هاد الـPDF فيه الخدمات اللي اخترتي، الأثمان والتخفيضات بالتفصيل باش يبقى عندك المرجع ديالك.</p><div style="background:#10141a;border:1px solid #252b34;padding:15px;border-radius:12px;margin:16px 0"><b style="color:#f5d27b">👤 معلومات الطلب</b><br>الاسم: ${esc(BRstate.lead.name||'—')}<br>WhatsApp: ${esc(BRstate.lead.whatsapp||'—')}<br>${BRstate.lead.email?'Gmail: '+esc(BRstate.lead.email)+'<br>':''}المجال: ${esc(BRstate.industry||'—')}<br>${BRstate.lead.brand?'النشاط / Brand: '+esc(BRstate.lead.brand)+'<br>':''}${BRstate.lead.city?'المدينة: '+esc(BRstate.lead.city):''}</div><h3 style="color:#f5d27b">📦 الخدمات المختارة</h3><div style="display:grid;gap:8px">${rows.map(r=>`<div style="display:flex;justify-content:space-between;gap:14px;padding:10px 12px;border-radius:9px;background:#10141a;border:1px solid #252b34"><span>${esc(r[0])}</span><b style="color:#f5d27b;white-space:nowrap">${r[1]===null?'—':Number(r[1]).toLocaleString()+' DH'}</b></div>`).join('')||'<div>لا توجد خدمات مختارة</div>'}</div><div style="margin-top:18px;background:#17120c;border:1px solid rgba(231,184,79,.35);padding:17px;border-radius:13px"><div style="display:flex;justify-content:space-between"><span>الثمن الأصلي</span><b>${t.original.toLocaleString()} DH</b></div><div style="display:flex;justify-content:space-between;margin-top:7px"><span>تخفيض التسجيل</span><b>${window.BRANDIRASCK_PROMO_ON?'-25%':'غير مفعّل'}</b></div>${activePromo?`<div style="display:flex;justify-content:space-between;margin-top:7px;color:#55d187"><span>Promo ${esc(activeCode)}</span><b>-${activePromo}%</b></div>`:''}<div style="display:flex;justify-content:space-between;margin-top:7px"><span>التخفيض الإجمالي</span><b>${t.totalDiscount}%</b></div><hr style="border:0;border-top:1px solid #333;margin:14px 0"><div style="display:flex;justify-content:space-between;font-size:24px;color:#f5d27b"><span>TOTAL À PAYER</span><b>${t.final.toLocaleString()} DH</b></div><div style="display:flex;justify-content:space-between;margin-top:8px;color:#55d187"><span>🎉 التوفير الإجمالي</span><b>${t.saved.toLocaleString()} DH</b></div></div><p style="color:#777;font-size:11px;margin-top:20px;text-align:center">BRANDIRASCK · brandirasck@gmail.com · WhatsApp +212 605 320 470</p></div>`;
   }
-  // V8: export exactly the visible recap card as a rendered image, preserving its
-  // colors, gradients, borders, spacing, logo, Arabic text and layout. This avoids
-  // html2pdf reflow/blank-page issues. If the card is taller than one A4 page, the
-  // same rendered image is split across pages without rebuilding the HTML.
   async function ensurePDF(){
-    if(window.html2canvas && window.jspdf?.jsPDF)return true;
-    await new Promise((resolve,reject)=>{
-      const urls=[
-        'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
-      ];
-      let i=0;
-      const load=()=>{
-        if(i>=urls.length){resolve();return;}
-        const sc=document.createElement('script');sc.src=urls[i++];sc.onload=load;sc.onerror=reject;document.head.appendChild(sc);
-      };
-      load();
-    });
-    return !!(window.html2canvas && window.jspdf?.jsPDF);
+    if(window.html2pdf)return true;
+    await new Promise((resolve,reject)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc)});return !!window.html2pdf;
   }
   window.BRdownloadPDF=async function(){
     const el=document.getElementById('BRPDFDocument');if(!el)return;
-    const btn=event?.currentTarget;
-    if(btn){btn.disabled=true;btn.textContent='⏳ تجهيز PDF...';}
-    try{
-      await ensurePDF();
-      if(!window.html2canvas || !window.jspdf?.jsPDF)throw new Error('PDF libraries unavailable');
-      // Capture the exact visible HTML card. Scale 2.5 gives a sharp PDF while
-      // keeping the file reasonably sized.
-      const canvas=await html2canvas(el,{
-        scale:2.5,
-        useCORS:true,
-        allowTaint:false,
-        backgroundColor:'#070707',
-        logging:false,
-        imageTimeout:15000,
-        windowWidth:Math.max(document.documentElement.clientWidth,el.scrollWidth),
-        windowHeight:Math.max(document.documentElement.clientHeight,el.scrollHeight)
-      });
-      const {jsPDF}=window.jspdf;
-      const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
-      const pageW=210, pageH=297, margin=0;
-      const imgW=pageW, imgH=canvas.height*imgW/canvas.width;
-      if(imgH<=pageH){
-        pdf.addImage(canvas.toDataURL('image/jpeg',0.98),'JPEG',0,0,imgW,imgH,undefined,'FAST');
-      }else{
-        const pxPerPage=Math.floor(canvas.width*(pageH/imgW));
-        let y=0, page=0;
-        while(y<canvas.height){
-          const sliceH=Math.min(pxPerPage,canvas.height-y);
-          const slice=document.createElement('canvas');
-          slice.width=canvas.width;slice.height=sliceH;
-          const ctx=slice.getContext('2d');
-          ctx.fillStyle='#070707';ctx.fillRect(0,0,slice.width,slice.height);
-          ctx.drawImage(canvas,0,y,canvas.width,sliceH,0,0,slice.width,sliceH);
-          const h=sliceH*imgW/canvas.width;
-          if(page>0)pdf.addPage();
-          pdf.addImage(slice.toDataURL('image/jpeg',0.98),'JPEG',0,0,imgW,h,undefined,'FAST');
-          y+=sliceH;page++;
-        }
-      }
-      pdf.save('BRANDIRASCK-recapitulatif.pdf');
-      if(btn){btn.disabled=false;btn.textContent='⬇️ تحميل PDF';}
-    }catch(e){
-      console.error('BRANDIRASCK V8 PDF error:',e);
-      if(btn){btn.disabled=false;btn.textContent='⬇️ تحميل PDF';}
-      alert('تعذر إنشاء PDF دابا. تأكد من اتصال الإنترنت ثم جرب من جديد.');
-    }
+    try{await ensurePDF();html2pdf().set({margin:8,filename:'BRANDIRASCK-recapitulatif.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#070707'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();}catch(e){alert('تحميل PDF ما خدمش دابا. استعمل Print > Save as PDF إذا احتجتي.');}
   };
 
   function showAfterSend(msg){
