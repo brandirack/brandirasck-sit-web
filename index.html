@@ -1490,14 +1490,6 @@ function demoPay(){let a=JSON.parse(localStorage.getItem("brandirasck_account")|
 </script>
 
 <script>
-/* Compatibility helper for legacy in-file code. */
-window.BRfPriceFor = window.BRfPriceFor || function(f){
-  const p = f?.type === 'stable' ? 260 : f?.type === 'refill' ? 150 : 60;
-  return ((f?.qty || 0) / 10000) * p;
-};
-</script>
-
-<script>
 /* BRANDIRASCK CATALOG V2 — global offer cycle + promo codes + PDF preview */
 (function(){
   const CYCLE=[
@@ -1869,8 +1861,49 @@ window.BRfPriceFor = window.BRfPriceFor || function(f){
     await new Promise((resolve,reject)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc)});return !!window.html2pdf;
   }
   window.BRdownloadPDF=async function(){
-    const el=document.getElementById('BRPDFDocument');if(!el)return;
-    try{await ensurePDF();html2pdf().set({margin:8,filename:'BRANDIRASCK-recapitulatif.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#070707'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();}catch(e){alert('تحميل PDF ما خدمش دابا. استعمل Print > Save as PDF إذا احتجتي.');}
+    const el=document.getElementById('BRPDFDocument');
+    if(!el)return;
+    try{
+      // Generate ONE continuous/tall PDF page instead of letting html2pdf split
+      // the recap automatically across multiple A4 pages.
+      await ensurePDF();
+      if(!window.html2canvas){
+        await new Promise((resolve,reject)=>{
+          const sc=document.createElement('script');
+          sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc);
+        });
+      }
+      if(!window.jspdf || !window.jspdf.jsPDF){
+        await new Promise((resolve,reject)=>{
+          const sc=document.createElement('script');
+          sc.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+          sc.onload=resolve;sc.onerror=reject;document.head.appendChild(sc);
+        });
+      }
+
+      const canvas=await html2canvas(el,{
+        scale:2,
+        useCORS:true,
+        allowTaint:true,
+        backgroundColor:'#070707',
+        logging:false
+      });
+
+      const pageW=210;
+      const margin=8;
+      const contentW=pageW-(margin*2);
+      const contentH=contentW*(canvas.height/canvas.width);
+      const pageH=contentH+(margin*2);
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({unit:'mm',format:[pageW,pageH],orientation:'portrait',compress:true});
+      const img=canvas.toDataURL('image/jpeg',0.98);
+      pdf.addImage(img,'JPEG',margin,margin,contentW,contentH,undefined,'FAST');
+      pdf.save('BRANDIRASCK-recapitulatif.pdf');
+    }catch(e){
+      console.error('BRANDIRASCK one-page PDF error:',e);
+      alert('تحميل PDF ما خدمش دابا. جرب من جديد.');
+    }
   };
 
   function showAfterSend(msg){
