@@ -1,7 +1,3 @@
 {
-  "functions": {
-    "api/catalog.js": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  "cleanUrls": true
 }
